@@ -66,13 +66,9 @@ const taskSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    subTasks: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Task",
-        },
-      ],
+    taskId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Task",
     },
     project: {
       type: mongoose.Schema.Types.ObjectId,
