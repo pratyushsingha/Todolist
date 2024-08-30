@@ -40,7 +40,7 @@ export async function POST(request, { params }) {
   }
 }
 
-export async function PUT(request, { params }) {
+export async function PUT(request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const projectId = searchParams.get("projectId");
@@ -88,7 +88,7 @@ export async function PUT(request, { params }) {
   }
 }
 
-export async function DELETE(_, { params }) {
+export async function DELETE(request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const projectId = searchParams.get("projectId");

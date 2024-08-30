@@ -5,7 +5,8 @@ import { taskModel, commentModel } from "@/model/Model";
 import { getMongoosePaginationOptions } from "@/helpers/pagination";
 
 export async function POST(request, { params }) {
-  const { id } = params;
+  const { searchParams } = new URL(request.url);
+  const taskId = searchParams.get("taskId");
   await dbConnect();
   try {
     const { userId } = auth();
@@ -23,7 +24,7 @@ export async function POST(request, { params }) {
       );
     }
 
-    const task = await taskModel.findById(id);
+    const task = await taskModel.findById(taskId);
     if (!task) {
       return Response.json(
         { success: false, message: "task not found" },
@@ -34,7 +35,7 @@ export async function POST(request, { params }) {
     const comment = new commentModel({
       content,
       owner: userId,
-      task: id,
+      task: taskId,
     });
 
     await comment.save();
@@ -48,8 +49,9 @@ export async function POST(request, { params }) {
   }
 }
 
-export async function PUT(request, { params }) {
-  const { id } = params;
+export async function PUT(request) {
+  const { searchParams } = new URL(request.url);
+  const commentId = searchParams.get("commentId");
   await dbConnect();
   console.log(id);
   try {
@@ -62,7 +64,7 @@ export async function PUT(request, { params }) {
     }
     const { content } = await request.json();
     const comment = await commentModel.findOneAndUpdate(
-      { _id: id, owner: userId },
+      { _id: commentId, owner: userId },
       { content },
       { new: true }
     );
@@ -76,8 +78,9 @@ export async function PUT(request, { params }) {
   }
 }
 
-export async function DELETE(_, { params }) {
-  const { id } = params;
+export async function DELETE(request) {
+  const { searchParams } = new URL(request.url);
+  const commentId = searchParams.get("commentId");
   await dbConnect();
   try {
     const { userId } = auth();
@@ -88,7 +91,7 @@ export async function DELETE(_, { params }) {
       );
     }
     const comment = await commentModel.findOneAndDelete({
-      _id: id,
+      _id: commentId,
       owner: userId,
     });
 
@@ -101,9 +104,10 @@ export async function DELETE(_, { params }) {
   }
 }
 
-export async function GET(request, { params }) {
+export async function GET(request) {
   await dbConnect();
-  const { id } = params;
+  const { searchParams } = new URL(request.url);
+  const taskId = searchParams.get("taskId");
   try {
     const { userId } = auth();
     if (!userId) {
@@ -116,7 +120,7 @@ export async function GET(request, { params }) {
     const allCommentsAggregate = commentModel.aggregate([
       {
         $match: {
-          task: new mongoose.Types.ObjectId(id),
+          task: new mongoose.Types.ObjectId(taskId),
         },
       },
       {
