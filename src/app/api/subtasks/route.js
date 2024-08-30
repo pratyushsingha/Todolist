@@ -3,9 +3,10 @@ import { taskModel } from "@/model/Model";
 import { auth } from "@clerk/nextjs/server";
 import mongoose from "mongoose";
 
-export async function POST(request, { params }) {
+export async function POST(request) {
   await dbConnect();
-  const { id } = params;
+  const { searchParams } = new URL(request.url);
+  const taskId = searchParams.get("taskId");
   try {
     const { userId } = auth();
     if (!userId) {
@@ -15,7 +16,7 @@ export async function POST(request, { params }) {
       );
     }
 
-    const task = await taskModel.findById(id);
+    const task = await taskModel.findById(taskId);
     if (!task) {
       return Response.json(
         { success: false, message: "task not found" },
@@ -38,7 +39,7 @@ export async function POST(request, { params }) {
       priority,
       reminders,
       owner: userId,
-      taskId: id,
+      taskId,
     });
 
     await subtask.save();
@@ -56,7 +57,8 @@ export async function POST(request, { params }) {
 
 export async function PUT(request, { params }) {
   await dbConnect();
-  const { id } = params;
+  const { searchParams } = new URL(request.url);
+  const subtaskId = searchParams.get("subtaskId");
   try {
     const { userId } = auth();
     if (!userId) {
@@ -68,7 +70,7 @@ export async function PUT(request, { params }) {
     const { title, description, dueDate, priority, reminders } =
       await request.json();
     const updatedTask = await taskModel.findOneAndUpdate(
-      { _id: id, owner: userId },
+      { _id: subtaskId, owner: userId },
       {
         title,
         description,
@@ -97,7 +99,8 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(_, { params }) {
   await dbConnect();
-  const { id } = params;
+  const { searchParams } = new URL(request.url);
+  const subtaskId = searchParams.get("subtaskId");
   try {
     const { userId } = auth();
     if (!userId) {
@@ -106,7 +109,7 @@ export async function DELETE(_, { params }) {
         { status: 401 }
       );
     }
-    const task = await taskModel.findById(id);
+    const task = await taskModel.findById(subtaskId);
     if (!task) {
       return Response.json(
         { success: false, message: "task not found" },
@@ -119,13 +122,12 @@ export async function DELETE(_, { params }) {
         { status: 401 }
       );
     }
-    const deletedTask = await taskModel.findByIdAndDelete(id);
-
+    await task.remove();
     return Response.json(
       {
         success: true,
         data: deletedTask,
-        message: "subtask updated successfully",
+        message: "subtask deleted successfully",
       },
       { status: 200 }
     );
@@ -139,7 +141,8 @@ export async function DELETE(_, { params }) {
 
 export async function GET(_, { params }) {
   await dbConnect();
-  const { id } = params;
+  const { searchParams } = new URL(request.url);
+  const subtaskId = searchParams.get("subtaskId");
   try {
     const { userId } = auth();
     if (!userId) {
@@ -151,7 +154,7 @@ export async function GET(_, { params }) {
     const subTasks = await taskModel.aggregate([
       {
         $match: {
-          taskId: new mongoose.Types.ObjectId(id),
+          taskId: new mongoose.Types.ObjectId(subtaskId),
           isCompleted: false,
         },
       },

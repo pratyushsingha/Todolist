@@ -78,6 +78,10 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    section: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Section",
+    },
   },
   { timestamps: true }
 );
@@ -99,31 +103,33 @@ const projectSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-const teamSchema = new mongoose.Schema(
+const workspaceSchema = new mongoose.Schema(
   {
-    teamName: {
+    name: {
       type: String,
       required: true,
     },
-    color: {
+    owner: {
       type: String,
+      required: true,
     },
-    workspace: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Workspace",
+    members: {
+      type: [String],
     },
-    section: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Section",
+    isTeam: {
+      type: Boolean,
+      default: false,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 const commentSchema = new mongoose.Schema(
@@ -149,13 +155,16 @@ const commentSchema = new mongoose.Schema(
 
 const sectionSchema = new mongoose.Schema(
   {
-    sectionName: {
+    name: {
       type: String,
       required: true,
     },
-    type: {
+    project: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+    },
+    owner: {
       type: String,
-      enum: ["project", "team"],
       required: true,
     },
   },
@@ -169,17 +178,18 @@ const userModel = mongoose.models.User || mongoose.model("User", userSchema);
 const taskModel = mongoose.models.Task || mongoose.model("Task", taskSchema);
 const projectModel =
   mongoose.models.Project || mongoose.model("Project", projectSchema);
-const teamModel = mongoose.models.Team || mongoose.model("Team", teamSchema);
 const sectionModel =
   mongoose.models.Section || mongoose.model("Section", sectionSchema);
 const commentModel =
   mongoose.models.Comment || mongoose.model("Comment", commentSchema);
+const workspaceModel =
+  mongoose.models.Workspace || mongoose.model("Workspace", workspaceSchema);
 
 export {
   userModel,
   taskModel,
   projectModel,
-  teamModel,
   sectionModel,
   commentModel,
+  workspaceModel,
 };

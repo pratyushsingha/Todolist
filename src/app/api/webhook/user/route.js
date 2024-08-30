@@ -1,7 +1,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import dbConnect from "@/lib/dbConnect";
-import { userModel } from "@/model/Model";
+import { projectModel, userModel, workspaceModel } from "@/model/Model";
 
 export async function handler(req) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
@@ -60,7 +60,23 @@ export async function handler(req) {
         lastName: data.last_name,
         avatar: data.image_url,
       });
+
+      const defaultWorkSpace = new workspaceModel({
+        name: "My Projects",
+        owner: data.id,
+        members: [data.id],
+      });
+
       await newUser.save();
+      await defaultWorkSpace.save();
+
+      const defaultProject = new projectModel({
+        projectName: "Home 🏡",
+        color: "#FFD700",
+        workspace: defaultWorkSpace._id,
+        owner: data.id,
+      });
+      await defaultProject.save();
     } else {
       await userModel.updateOne(
         { userId: data.id },

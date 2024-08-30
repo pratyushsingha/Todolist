@@ -2,9 +2,10 @@ import dbConnect from "@/lib/dbConnect";
 import { taskModel } from "@/model/Model";
 import { auth } from "@clerk/nextjs/server";
 
-export async function POST(_, { params }) {
+export async function POST(request) {
   await dbConnect();
-  const { id } = params;
+  const { searchParams } = new URL(request.url);
+  const taskId = searchParams.get("taskId");
   try {
     const { userId } = auth();
     if (!userId) {
@@ -13,7 +14,7 @@ export async function POST(_, { params }) {
         { status: 401 }
       );
     }
-    const task = await taskModel.findById(id);
+    const task = await taskModel.findById(taskId);
     if (!task) {
       return Response.json(
         { success: false, message: "task not found" },
