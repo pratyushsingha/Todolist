@@ -41,7 +41,12 @@ const taskSchema = new mongoose.Schema(
       type: String,
     },
     labels: {
-      type: [String],
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Label",
+        },
+      ],
     },
     dueDate: {
       type: Date,
@@ -171,6 +176,24 @@ const sectionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const labelSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    color: {
+      type: String,
+      required: true,
+    },
+    owner: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
 taskSchema.plugin(mongooseAggregatePaginate);
 commentSchema.plugin(mongooseAggregatePaginate);
 
@@ -184,6 +207,8 @@ const commentModel =
   mongoose.models.Comment || mongoose.model("Comment", commentSchema);
 const workspaceModel =
   mongoose.models.Workspace || mongoose.model("Workspace", workspaceSchema);
+const labelModel =
+  mongoose.models.label || mongoose.model("label", labelSchema);
 
 export {
   userModel,
@@ -192,4 +217,5 @@ export {
   sectionModel,
   commentModel,
   workspaceModel,
+  labelModel,
 };

@@ -199,6 +199,9 @@ export async function GET(request) {
             dueDate: 1,
             labels: 1,
             project: { $first: "$project" },
+            priority: 1,
+            reminders: 1,
+            isCompleted: 1,
           },
         },
       ]);
