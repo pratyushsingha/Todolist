@@ -6,18 +6,21 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import "./globals.css";
+import { Providers } from "./providers";
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
         <body>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-          {children}
+          <Providers>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            {children}
+          </Providers>
         </body>
       </html>
     </ClerkProvider>
