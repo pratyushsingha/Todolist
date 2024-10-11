@@ -2,7 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import { sectionModel, taskModel } from "@/model/Model";
 import { auth } from "@clerk/nextjs/server";
 
-export async function POST(request, { params }) {
+export async function POST(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const projectId = searchParams.get("projectId");
@@ -40,7 +40,7 @@ export async function POST(request, { params }) {
   }
 }
 
-export async function PUT(request) {
+export async function PUT(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const projectId = searchParams.get("projectId");
@@ -88,7 +88,7 @@ export async function PUT(request) {
   }
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const projectId = searchParams.get("projectId");

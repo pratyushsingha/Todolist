@@ -7,7 +7,9 @@ import {
 } from "@clerk/nextjs";
 import "./globals.css";
 import { Providers } from "./providers";
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
       <html lang="en">

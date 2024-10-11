@@ -2,7 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import { taskModel } from "@/model/Model";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GET(request) {
+export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const weekStartDate = searchParams.get("weekStartDate");
   await dbConnect();
@@ -12,6 +12,12 @@ export async function GET(request) {
       return Response.json(
         { success: false, message: "Unauthorized" },
         { status: 401 }
+      );
+    }
+    if (!weekStartDate) {
+      return Response.json(
+        { success: false, message: "Invalid week start date" },
+        { status: 400 }
       );
     }
     const firstDateOfWeek = new Date(weekStartDate);

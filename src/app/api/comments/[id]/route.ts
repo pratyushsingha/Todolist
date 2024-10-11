@@ -4,7 +4,7 @@ import dbConnect from "@/lib/dbConnect";
 import { taskModel, commentModel } from "@/model/Model";
 import { getMongoosePaginationOptions } from "@/helpers/pagination";
 
-export async function POST(request, { params }) {
+export async function POST(request: Request) {
   const { searchParams } = new URL(request.url);
   const taskId = searchParams.get("taskId");
   await dbConnect();
@@ -41,7 +41,7 @@ export async function POST(request, { params }) {
     await comment.save();
 
     return Response.json({ success: true, data: comment }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     return Response.json(
       { success: false, message: `error creating comment ${error}` },
       { status: 404 }
@@ -49,11 +49,11 @@ export async function POST(request, { params }) {
   }
 }
 
-export async function PUT(request) {
+export async function PUT(request: Request) {
   const { searchParams } = new URL(request.url);
   const commentId = searchParams.get("commentId");
   await dbConnect();
-  console.log(id);
+
   try {
     const { userId } = auth();
     if (!userId) {
@@ -70,7 +70,7 @@ export async function PUT(request) {
     );
 
     return Response.json({ success: true, data: comment }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     return Response.json(
       { success: false, message: error.message },
       { status: 401 }
@@ -78,7 +78,7 @@ export async function PUT(request) {
   }
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const commentId = searchParams.get("commentId");
   await dbConnect();
@@ -96,7 +96,7 @@ export async function DELETE(request) {
     });
 
     return Response.json({ success: true, data: comment }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     return Response.json(
       { success: false, message: error.message },
       { status: 401 }
@@ -104,7 +104,7 @@ export async function DELETE(request) {
   }
 }
 
-export async function GET(request) {
+export async function GET(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const taskId = searchParams.get("taskId");
@@ -116,7 +116,13 @@ export async function GET(request) {
         { status: 401 }
       );
     }
-    console.log(typeof id);
+
+    if (!taskId || !mongoose.isValidObjectId(taskId)) {
+      return Response.json(
+        { success: false, message: "task id is missing or invalid" },
+        { status: 400 }
+      );
+    }
     const allCommentsAggregate = commentModel.aggregate([
       {
         $match: {
@@ -150,7 +156,7 @@ export async function GET(request) {
       );
     }
 
-    const allComments = await commentModel.aggregatePaginate(
+    const allComments = await (commentModel as any).aggregatePaginate(
       allCommentsAggregate,
       getMongoosePaginationOptions({
         page: 1,

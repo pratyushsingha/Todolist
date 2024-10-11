@@ -2,8 +2,9 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import dbConnect from "@/lib/dbConnect";
 import { projectModel, userModel, workspaceModel } from "@/model/Model";
+import { WebhookEvent } from "@clerk/nextjs/server";
 
-export async function handler(req) {
+async function handler(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
@@ -28,14 +29,14 @@ export async function handler(req) {
 
   const wh = new Webhook(WEBHOOK_SECRET);
 
-  let evt;
+  let evt: WebhookEvent;
 
   try {
     evt = wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
-    });
+    }) as WebhookEvent;
   } catch (err) {
     console.error("Error verifying webhook:", err);
     return Response.json(
@@ -81,7 +82,8 @@ export async function handler(req) {
       await userModel.updateOne(
         { userId: data.id },
         {
-          email: data.data.email_addresses[0].email_address,
+          // email: data.data.email_addresses[0].email_address,
+          email: data.email_addresses[0].email_address,
           firstName: data.first_name,
           lastName: data.last_name,
           avatar: data.image_url,
