@@ -1,8 +1,8 @@
 import dbConnect from "@/lib/dbConnect";
-import { workspaceModel } from "@/model/Model";
+import { projectModel, workspaceModel } from "@/model/Model";
 import { auth } from "@clerk/nextjs/server";
 
-export async function POST(request) {
+export async function POST(request: Request) {
   await dbConnect();
   try {
     const { userId } = auth();
@@ -45,7 +45,7 @@ export async function POST(request) {
   }
 }
 
-export async function GET(request) {
+export async function GET(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const workspaceId = searchParams.get("workspaceId");

@@ -2,7 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import { taskModel } from "@/model/Model";
 import { auth } from "@clerk/nextjs/server";
 
-export async function POST(request) {
+export async function POST(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const taskId = searchParams.get("taskId");

@@ -3,7 +3,7 @@ import { taskModel } from "@/model/Model";
 import { auth } from "@clerk/nextjs/server";
 import mongoose from "mongoose";
 
-export async function POST(request) {
+export async function POST(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const taskId = searchParams.get("taskId");
@@ -55,7 +55,7 @@ export async function POST(request) {
   }
 }
 
-export async function PUT(request, { params }) {
+export async function PUT(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const subtaskId = searchParams.get("subtaskId");
@@ -97,7 +97,7 @@ export async function PUT(request, { params }) {
   }
 }
 
-export async function DELETE(_, { params }) {
+export async function DELETE(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const subtaskId = searchParams.get("subtaskId");
@@ -126,7 +126,7 @@ export async function DELETE(_, { params }) {
     return Response.json(
       {
         success: true,
-        data: deletedTask,
+        data: task,
         message: "subtask deleted successfully",
       },
       { status: 200 }
@@ -139,7 +139,7 @@ export async function DELETE(_, { params }) {
   }
 }
 
-export async function GET(_, { params }) {
+export async function GET(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const subtaskId = searchParams.get("subtaskId");
@@ -151,6 +151,14 @@ export async function GET(_, { params }) {
         { status: 401 }
       );
     }
+
+    if (!subtaskId || !mongoose.Types.ObjectId.isValid(subtaskId)) {
+      return Response.json(
+        { success: false, message: "Invalid subtask id" },
+        { status: 400 }
+      );
+    }
+    
     const subTasks = await taskModel.aggregate([
       {
         $match: {

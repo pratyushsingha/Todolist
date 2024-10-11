@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getMongoosePaginationOptions } from "@/helpers/pagination";
 import mongoose from "mongoose";
 
-export async function POST(request) {
+export async function POST(request: Request) {
   await dbConnect();
   try {
     const { userId } = auth();
@@ -41,7 +41,7 @@ export async function POST(request) {
   }
 }
 
-export async function PUT(request) {
+export async function PUT(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const taskId = searchParams.get("taskId");
@@ -77,7 +77,7 @@ export async function PUT(request) {
   }
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const taskId = searchParams.get("taskId");
@@ -104,7 +104,7 @@ export async function DELETE(request) {
   }
 }
 
-export async function GET(request) {
+export async function GET(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const taskId = searchParams.get("taskId");
@@ -213,7 +213,7 @@ export async function GET(request) {
         );
       }
 
-      const allTasks = await taskModel.aggregatePaginate(
+      const allTasks = await (taskModel as any).aggregatePaginate(
         allTasksAggregate,
         getMongoosePaginationOptions({
           page: 1,
