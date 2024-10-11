@@ -3,7 +3,7 @@ import { projectModel } from "@/model/Model";
 import { auth } from "@clerk/nextjs/server";
 import mongoose from "mongoose";
 
-export async function POST(request) {
+export async function POST(request: Request) {
   await dbConnect();
   try {
     const { userId } = auth();
@@ -43,7 +43,7 @@ export async function POST(request) {
   }
 }
 
-export async function GET(request) {
+export async function GET(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const projectId = searchParams.get("projectId");
@@ -53,6 +53,13 @@ export async function GET(request) {
       return Response.json(
         { success: false, message: "Unauthorized" },
         { status: 401 }
+      );
+    }
+
+    if (!projectId || !mongoose.isValidObjectId(projectId)) {
+      return Response.json(
+        { success: false, message: "Invalid project id" },
+        { status: 400 }
       );
     }
     const projectDetails = await projectModel.aggregate([
@@ -123,7 +130,7 @@ export async function GET(request) {
   }
 }
 
-export async function PUT(request) {
+export async function PUT(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const projectId = searchParams.get("projectId");

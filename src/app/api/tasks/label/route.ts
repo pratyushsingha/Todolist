@@ -26,7 +26,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request) {
+export async function POST(request: Request) {
   await dbConnect();
   try {
     const { userId } = auth();
@@ -63,7 +63,7 @@ export async function POST(request) {
   }
 }
 
-export async function PUT(request) {
+export async function PUT(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const labelId = searchParams.get("labelId");
@@ -102,7 +102,7 @@ export async function PUT(request) {
   }
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: Request) {
   await dbConnect();
   const { searchParams } = new URL(request.url);
   const labelId = searchParams.get("labelId");
