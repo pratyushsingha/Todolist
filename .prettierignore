@@ -1,0 +1,33 @@
+# Ignore build output directories
+.next
+out
+
+# Ignore node_modules
+node_modules
+
+# Ignore environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore compiled TypeScript files
+dist
+build
+*.d.ts
+
+# Ignore public files (images, fonts, etc.)
+public
+
+# Ignore coverage directories (if using testing tools like Jest)
+coverage
+
+# Ignore any additional directories or files that shouldn't be formatted
+**/vendor/**
+**/generated/**
