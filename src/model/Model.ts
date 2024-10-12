@@ -47,11 +47,20 @@ export interface Comment extends Document {
   owner: string;
 }
 
+export interface Member {
+  userId: string;
+  role: "admin" | "member";
+  status: "active" | "pending" | "removed";
+}
+
 export interface Workspace extends Document {
   name: string;
   owner: string;
-  members: string[];
+  members: Array<Member>;
   isTeam: boolean;
+  inviteCode?: string;
+  isInviteActive?: boolean;
+  inviteCodeExpiry: Date;
 }
 
 export interface Label extends Document {
@@ -182,11 +191,33 @@ const workspaceSchema: Schema<Workspace> = new Schema(
       type: String,
       required: true,
     },
-    members: [String],
+    members: [
+      {
+        userId: String,
+        role: {
+          type: String,
+          enum: ["admin", "member"]
+        },
+        status: {
+          type: String,
+          enum: ["active", "pending", "removed"]
+        }
+      }
+    ],
     isTeam: {
       type: Boolean,
       default: false,
     },
+    inviteCode: {
+      type: String,
+    },
+    isInviteActive: {
+      type: Boolean,
+      default: false,
+    },
+    inviteCodeExpiry: {
+      type: Date,
+    }
   },
   { timestamps: true }
 );
